@@ -52,7 +52,7 @@ export default function About() {
             University (HNGU), graduating in 2027. I’m passionate about
             Frontend Development and enjoy building responsive web applications
             using React.js and JavaScript. I’m currently strengthening my
-            programming fundamentals, learning DSA, and improving my skills by
+            programming fundamentals, learning DSA(Data Structure Algorithm), and improving my skills by
             building real-world projects.
           </p>
         </motion.div>

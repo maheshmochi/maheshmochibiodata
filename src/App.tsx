@@ -17,7 +17,7 @@ import TerminalSection from './components/Terminal';
 import Contact from './components/Contact';
 import ContactForm from './components/ContactForm';
 import Footer from './components/Footer';
-
+import Certificates from "./components/Certificates";
 import Scene3D from './components/Scene3D';
 
 import { ThemeProvider } from './context/ThemeContext';
@@ -86,6 +86,9 @@ export default function App() {
 
           {/* Projects */}
           <Projects />
+
+         
+          <Certificates />
 
           {/* Experience */}
           <Experience />
