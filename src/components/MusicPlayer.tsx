@@ -1,100 +1,155 @@
-import { useState, useRef } from "react";
-import { Play, Pause, Volume2, VolumeX } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Music2, Play, Pause } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 export default function MusicPlayer() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [showControls, setShowControls] = useState(true);
-
-  // We use an empty audio object, users would typically supply a valid audio source url.
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-const togglePlay = () => {
-  if (audioRef.current) {
-    if (audioRef.current.paused) {
-      audioRef.current.play().catch(e => console.log("Audio play failed:", e));
-    } else {
-      audioRef.current.pause();
-    }
-  }
-};
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showLabel, setShowLabel] = useState(false);
+  const [autoPlayBlocked, setAutoPlayBlocked] = useState(false);
 
-  const toggleMute = () => {
-    if (audioRef.current) {
-      audioRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
+  // Try to start music when the website opens
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.volume = 0.45;
+
+    const startMusic = async () => {
+      try {
+        await audio.play();
+        setIsPlaying(true);
+        setAutoPlayBlocked(false);
+      } catch {
+        // Browser may block autoplay with sound
+        setIsPlaying(false);
+        setAutoPlayBlocked(true);
+      }
+    };
+
+    void startMusic();
+
+    return () => {
+      audio.pause();
+    };
+  }, []);
+
+  const toggleMusic = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (audio.paused) {
+      try {
+        await audio.play();
+        setIsPlaying(true);
+        setAutoPlayBlocked(false);
+      } catch {
+        setIsPlaying(false);
+        setAutoPlayBlocked(true);
+      }
+    } else {
+      audio.pause();
+      setIsPlaying(false);
     }
   };
 
   return (
-    <motion.div
-      className="fixed bottom-6 right-6 z-40 flex items-center justify-center gap-2"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 1 }}
-    >
+    <>
       <audio
         ref={audioRef}
-        loop
         src="/background_music.mp3"
-        autoPlay
+        loop
+        preload="auto"
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
       />
 
-      <AnimatePresence>
-        {showControls && (
+      <motion.div
+        className="fixed bottom-5 right-5 z-[100] flex items-center gap-3"
+        initial={{ opacity: 0, y: 24, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.6, delay: 0.5 }}
+      >
+        {/* Music information */}
+        <AnimatePresence>
+          {showLabel && (
+            <motion.div
+              initial={{ opacity: 0, x: 15, scale: 0.95 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 10, scale: 0.95 }}
+              className="rounded-2xl border border-white/10 bg-[#100d1c]/95 px-4 py-3 shadow-2xl backdrop-blur-xl"
+            >
+              <p className="text-sm font-semibold text-white">
+                Background Music
+              </p>
+
+              <p className="mt-1 text-xs text-white/50">
+                {isPlaying
+                  ? "♪ Now playing"
+                  : autoPlayBlocked
+                    ? "Click play to start"
+                    : "Music paused"}
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Animated vinyl disc */}
+        <motion.button
+          type="button"
+          onClick={toggleMusic}
+          onMouseEnter={() => setShowLabel(true)}
+          onMouseLeave={() => setShowLabel(false)}
+          onFocus={() => setShowLabel(true)}
+          onBlur={() => setShowLabel(false)}
+          aria-label={isPlaying ? "Turn music off" : "Turn music on"}
+          title={isPlaying ? "Turn music off" : "Turn music on"}
+          className="group relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-white/15 bg-[#171126]/90 shadow-[0_0_30px_rgba(157,78,221,0.25)] backdrop-blur-xl transition-all duration-300 hover:scale-110 hover:border-purple-400/70 hover:shadow-[0_0_35px_rgba(157,78,221,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+          whileTap={{ scale: 0.92 }}
+        >
+          {/* Outer glow */}
+          {isPlaying && (
+            <motion.span
+              className="absolute inset-0 rounded-full border border-purple-400/70"
+              animate={{ scale: [1, 1.28], opacity: [0.6, 0] }}
+              transition={{
+                duration: 1.8,
+                repeat: Infinity,
+                ease: "easeOut",
+              }}
+            />
+          )}
+
+          {/* Record */}
           <motion.div
-            initial={{ opacity: 0, width: 0 }}
-            animate={{ opacity: 1, width: "auto" }}
-            exit={{ opacity: 0, width: 0 }}
-            className="flex items-center gap-2 glass-panel rounded-full px-4 py-2"
+            className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/20"
+            animate={{ rotate: isPlaying ? 360 : 0 }}
+            transition={{
+              duration: 4,
+              repeat: isPlaying ? Infinity : 0,
+              ease: "linear",
+            }}
+            style={{
+              background:
+                "repeating-radial-gradient(circle, #282033 0px, #171126 2px, #30203f 3px, #171126 5px)",
+            }}
           >
-            <button
-              onClick={togglePlay}
-              className="text-white hover:text-[#9d4edd] transition-colors"
-              id="btn-play"
-            >
-              {isPlaying ? <Pause size={18} /> : <Play size={18} />}
-            </button>
-            <button
-              onClick={toggleMute}
-              className="text-white hover:text-[#9d4edd] transition-colors"
-              id="btn-mute"
-            >
-              {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-            </button>
-            <div className="w-16 h-1 bg-white/20 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-[#9d4edd]"
-                animate={{
-                  width:
-                    isPlaying && !isMuted
-                      ? ["20%", "80%", "40%", "90%", "30%"]
-                      : "0%",
-                }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-              />
+            <div className="flex h-5 w-5 items-center justify-center rounded-full border border-purple-300/50 bg-gradient-to-br from-purple-500 to-fuchsia-600 shadow-[0_0_12px_rgba(168,85,247,0.65)]">
+              <Music2 size={11} className="text-white" />
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
 
-      <button
-        onClick={() => setShowControls(!showControls)}
-        className="w-12 h-12 rounded-full glass-panel flex items-center justify-center text-white hover:border-[#9d4edd] transition-all"
-        id="btn-music-toggle"
-      >
-        <motion.div
-          animate={{ rotate: isPlaying ? 360 : 0 }}
-          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-        >
-          <div className="w-6 h-6 rounded-full border-2 border-white/50 flex items-center justify-center">
-            <div className="w-2 h-2 rounded-full bg-[#9d4edd]" />
-          </div>
-        </motion.div>
-      </button>
-    </motion.div>
+          {/* Play / pause indicator */}
+          <span className="absolute -bottom-0.5 -right-0.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-[#100d1c] bg-purple-500 text-white shadow-lg">
+            {isPlaying ? (
+              <Pause size={11} fill="currentColor" />
+            ) : (
+              <Play size={11} fill="currentColor" />
+            )}
+          </span>
+        </motion.button>
+      </motion.div>
+    </>
   );
 }
