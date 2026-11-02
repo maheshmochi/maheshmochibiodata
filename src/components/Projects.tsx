@@ -1,3 +1,4 @@
+
 import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
 import {
@@ -9,8 +10,8 @@ import {
   ArrowUpRight,
   Sparkles,
   Utensils,
+  Plane,
 } from 'lucide-react';
-
 
 export default function Projects() {
   const { t } = useTranslation();
@@ -51,18 +52,52 @@ export default function Projects() {
       category: 'FOOD DELIVERY PROJECT',
       number: '03',
       desc: 'A food delivery web application built with React.js and PHP, designed to provide a smooth food browsing experience with an intuitive interface and responsive design. MySQL is used for database management.',
-      tech: ['React.js', 'PHP', 'MySQL', 'JavaScript', 'HTML5', 'CSS3'],
+      tech: [
+        'React.js',
+        'PHP',
+        'MySQL',
+        'JavaScript',
+        'HTML5',
+        'CSS3',
+      ],
       github: 'https://github.com/maheshmochi',
       live: null,
       status: 'In Development',
       icon: Utensils,
       accent: 'food',
     },
+    {
+      title: 'Kaprupura Online Travels',
+      category: 'TRAVEL & TOURISM WEBSITE',
+      number: '04',
+      desc: 'A modern and responsive travel website featuring destination exploration, tour packages, bus and car rental services, an interactive itinerary planner, and travel information. Includes a booking inquiry form integrated with Formspree for handling customer submissions, along with engaging animations and a user-friendly browsing experience.',
+      tech: [
+        'HTML5',
+        'CSS3',
+        'JavaScript',
+        'Formspree',
+        'Responsive Design',
+      ],
+      github: 'https://github.com/maheshmochi/kaprupura-online-travels',
+      live: 'https://kaprupura-online-travels.vercel.app/',
+      status: 'Live',
+      icon: Plane,
+      accent: 'travel',
+    },
   ];
+
+  const liveProjects = projects.filter(
+    (project) => project.status === 'Live'
+  ).length;
+
+  const developmentProjects = projects.filter(
+    (project) => project.status === 'In Development'
+  ).length;
 
   return (
     <section id="projects" className="projects-section">
       <div className="projects-container">
+
         {/* Section Heading */}
         <motion.div
           initial={{ opacity: 0, y: 25 }}
@@ -84,8 +119,8 @@ export default function Projects() {
 
             <p>
               A collection of projects built while exploring modern
-              frontend development, responsive interfaces, and practical
-              web experiences.
+              web development, responsive interfaces, and practical
+              digital experiences.
             </p>
           </div>
 
@@ -110,21 +145,21 @@ export default function Projects() {
           transition={{ duration: 0.5 }}
         >
           <div className="projects-stat">
-            <strong>03</strong>
+            <strong>{String(projects.length).padStart(2, '0')}</strong>
             <span>Featured Projects</span>
           </div>
 
           <div className="projects-stat-divider" />
 
           <div className="projects-stat">
-            <strong>01</strong>
-            <span>Live Website</span>
+            <strong>{String(liveProjects).padStart(2, '0')}</strong>
+            <span>Live Websites</span>
           </div>
 
           <div className="projects-stat-divider" />
 
           <div className="projects-stat">
-            <strong>02</strong>
+            <strong>{String(developmentProjects).padStart(2, '0')}</strong>
             <span>In Development</span>
           </div>
         </motion.div>
@@ -140,9 +175,13 @@ export default function Projects() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.55, delay: idx * 0.12 }}
+                transition={{
+                  duration: 0.55,
+                  delay: idx * 0.12,
+                }}
                 className={`project-card project-${project.accent}`}
               >
+
                 {/* Visual Header */}
                 <div className="project-visual">
                   <div className="project-glow" />
@@ -154,7 +193,10 @@ export default function Projects() {
 
                   <div className="project-visual-content">
                     <div className="project-icon-box">
-                      <ProjectIcon size={36} strokeWidth={1.5} />
+                      <ProjectIcon
+                        size={36}
+                        strokeWidth={1.5}
+                      />
                     </div>
 
                     <div className="project-visual-text">
@@ -187,7 +229,9 @@ export default function Projects() {
 
                 {/* Project Information */}
                 <div className="project-details">
-                  <p className="project-description">{project.desc}</p>
+                  <p className="project-description">
+                    {project.desc}
+                  </p>
 
                   <div className="project-tech-list">
                     {project.tech.map((tech) => (
@@ -195,7 +239,7 @@ export default function Projects() {
                     ))}
                   </div>
 
-                  {/* Actions */}
+                  {/* Project Actions */}
                   <div className="project-actions">
                     {project.live ? (
                       <a
@@ -251,6 +295,7 @@ export default function Projects() {
             <ExternalLink size={15} />
           </a>
         </motion.div>
+
       </div>
     </section>
   );
