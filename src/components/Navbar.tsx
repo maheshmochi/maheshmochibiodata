@@ -9,10 +9,12 @@ import {
   Sun,
   Moon,
   ChevronDown,
+  ArrowUpRight,
+  Sparkles,
 } from 'lucide-react';
 
-import { cn } from '../lib/utils';
 import { useTheme } from '../context/ThemeContext';
+import './Navbar.css';
 
 export default function Navbar() {
   const { t, i18n } = useTranslation();
@@ -40,10 +42,10 @@ export default function Navbar() {
     { name: t('nav.contact'), href: '#contact' },
   ];
 
-  // Navbar scroll effect
+  // Scroll Effect
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY > 30);
     };
 
     handleScroll();
@@ -57,7 +59,7 @@ export default function Navbar() {
     };
   }, []);
 
-  // Close menus with Escape and close mobile menu on desktop resize
+  // Escape Key + Resize
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -81,7 +83,7 @@ export default function Navbar() {
     };
   }, []);
 
-  // Close language dropdown when clicking outside
+  // Outside Click
   useEffect(() => {
     const handleOutsideClick = (event: PointerEvent) => {
       if (
@@ -99,21 +101,18 @@ export default function Navbar() {
     };
   }, []);
 
+  // Language Change
   const changeLanguage = (lng: string) => {
     void i18n.changeLanguage(lng);
     setLanguageOpen(false);
     setMobileOpen(false);
   };
 
-  const closeMobileMenu = () => {
-    setMobileOpen(false);
-  };
-
+  // Navigation
   const handleNavigation = (href: string) => {
     setMobileOpen(false);
     setLanguageOpen(false);
 
-    // Allow normal navigation to the requested section.
     if (href.startsWith('#')) {
       const target = document.querySelector(href);
 
@@ -121,6 +120,11 @@ export default function Navbar() {
         target.scrollIntoView({
           behavior: 'smooth',
           block: 'start',
+        });
+      } else if (href === '#home') {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth',
         });
       }
     }
@@ -131,144 +135,101 @@ export default function Navbar() {
 
   return (
     <header
-      className={cn(
-        'fixed top-0 left-0 right-0 z-50',
-        'transition-all duration-300 pointer-events-auto',
-        scrolled
-          ? 'py-3 glass-panel border-x-0 border-t-0 border-b border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.25)]'
-          : 'py-5 bg-transparent'
-      )}
+      className={`navbar ${scrolled ? 'navbar-scrolled' : ''}`}
     >
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-12 flex items-center justify-between">
+      <div className="navbar-container">
 
         {/* LOGO */}
         <a
-          href="#"
+          href="#home"
+          className="navbar-logo"
           onClick={() => handleNavigation('#home')}
-          aria-label="Mahesh home"
-          className="group relative flex items-center gap-2.5 shrink-0"
+          aria-label="Mahesh Home"
         >
-          <div
-            className={cn(
-              'relative w-10 h-10 rounded-xl glass-panel',
-              'border border-white/10 flex items-center justify-center',
-              'overflow-hidden transition-all duration-300',
-              'group-hover:border-[#9d4edd]/60',
-              'group-hover:shadow-[0_0_25px_rgba(157,78,221,0.35)]',
-              'group-hover:scale-105'
-            )}
+          <motion.div
+            className="navbar-logo-icon"
+            whileHover={{ rotate: 8, scale: 1.08 }}
+            whileTap={{ scale: 0.94 }}
           >
-            <div className="absolute inset-0 bg-[#9d4edd]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <span>M</span>
+            <div className="logo-glow" />
+          </motion.div>
 
-            <span className="relative text-xl font-display font-bold text-[#9d4edd] group-hover:text-[#e0c3fc] transition-colors">
-              M
-            </span>
-          </div>
-
-          <div className="hidden sm:flex flex-col leading-none">
-            <span className="text-white font-display font-bold tracking-[0.18em] text-sm">
-              MAHESH
-            </span>
-
-            <span className="text-white/40 text-[9px] tracking-[0.25em] mt-1.5">
-              DEVELOPER
-            </span>
+          <div className="navbar-brand">
+            <span className="brand-name">MAHESH</span>
+            <span className="brand-role">DEVELOPER</span>
           </div>
         </a>
 
         {/* DESKTOP NAVIGATION */}
-        <nav
-          aria-label="Main navigation"
-          className="hidden md:flex gap-4 lg:gap-6 items-center"
-        >
-          {navLinks.map((link) => (
-            <a
+        <nav className="desktop-nav" aria-label="Main navigation">
+          {navLinks.map((link, index) => (
+            <motion.a
               key={link.href}
               href={link.href}
               onClick={() => handleNavigation(link.href)}
-              className={cn(
-                'group relative text-white/70 hover:text-white',
-                'transition-colors duration-300 text-xs lg:text-sm',
-                'uppercase tracking-wider font-mono py-2',
-                'focus-visible:outline-none focus-visible:text-white'
-              )}
+              className="nav-link"
+              initial={{ opacity: 0, y: -12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.07, duration: 0.4 }}
             >
               {link.name}
-
-              <span className="absolute left-0 bottom-0 w-0 h-px bg-[#9d4edd] shadow-[0_0_8px_rgba(157,78,221,0.8)] transition-all duration-300 group-hover:w-full" />
-            </a>
+              <span className="nav-link-line" />
+            </motion.a>
           ))}
 
-          {/* DESKTOP LANGUAGE MENU */}
-          <div ref={languageRef} className="relative ml-1">
+          {/* LANGUAGE DROPDOWN */}
+          <div className="language-wrapper" ref={languageRef}>
             <button
               type="button"
+              className={`nav-action language-trigger ${
+                languageOpen ? 'action-active' : ''
+              }`}
               onClick={() => setLanguageOpen((open) => !open)}
-              className={cn(
-                'flex items-center gap-2 px-3 py-2 rounded-lg',
-                'text-white/70 hover:text-white hover:bg-white/5',
-                'transition-all duration-300',
-                'focus-visible:outline-none focus-visible:ring-2',
-                'focus-visible:ring-[#9d4edd]'
-              )}
               aria-label="Change language"
               aria-expanded={languageOpen}
               aria-haspopup="menu"
             >
-              <Globe
-                size={17}
-                className="text-[#9d4edd]"
-              />
-
-              <span className="text-sm font-mono uppercase">
-                {currentLanguage}
-              </span>
+              <Globe size={17} />
+              <span>{currentLanguage.toUpperCase()}</span>
 
               <ChevronDown
                 size={14}
-                className={cn(
-                  'transition-transform duration-200',
-                  languageOpen && 'rotate-180'
-                )}
+                className={languageOpen ? 'chevron-open' : ''}
               />
             </button>
 
             <AnimatePresence>
               {languageOpen && (
                 <motion.div
-                  initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                  className="language-dropdown"
+                  initial={{ opacity: 0, y: 12, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 8, scale: 0.97 }}
-                  transition={{ duration: 0.18 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
                   role="menu"
-                  className={cn(
-                    'absolute top-full right-0 mt-3 py-2 w-40',
-                    'glass-panel rounded-xl border border-white/10',
-                    'shadow-[0_15px_40px_rgba(0,0,0,0.4)]',
-                    'overflow-hidden'
-                  )}
                 >
+                  <div className="dropdown-heading">
+                    Select Language
+                  </div>
+
                   {languages.map((language) => (
                     <button
                       key={language.code}
                       type="button"
                       role="menuitem"
                       onClick={() => changeLanguage(language.code)}
-                      className={cn(
-                        'w-full px-4 py-3 text-sm text-left',
-                        'transition-colors duration-200',
+                      className={`language-option ${
                         currentLanguage === language.code
-                          ? 'text-[#c084fc] bg-[#9d4edd]/15'
-                          : 'text-white/70 hover:bg-white/5 hover:text-white'
-                      )}
+                          ? 'language-selected'
+                          : ''
+                      }`}
                     >
-                      <span className="flex items-center justify-between">
-                        {language.label}
+                      <span>{language.label}</span>
 
-                        {currentLanguage === language.code && (
-                          <span className="text-[#9d4edd]">✓</span>
-                        )}
-                      </span>
+                      {currentLanguage === language.code && (
+                        <span className="language-check">✓</span>
+                      )}
                     </button>
                   ))}
                 </motion.div>
@@ -276,22 +237,13 @@ export default function Navbar() {
             </AnimatePresence>
           </div>
 
-          {/* DESKTOP THEME TOGGLE */}
+          {/* THEME TOGGLE */}
           <motion.button
             type="button"
-            whileHover={{ scale: 1.06 }}
-            whileTap={{ scale: 0.94 }}
+            className="nav-action theme-toggle"
             onClick={toggleTheme}
-            className={cn(
-              'relative w-10 h-10 rounded-xl glass-panel',
-              'border border-white/10 flex items-center justify-center',
-              'text-white/70 hover:text-[#c084fc]',
-              'hover:border-[#9d4edd]/50',
-              'hover:shadow-[0_0_20px_rgba(157,78,221,0.2)]',
-              'transition-all duration-300',
-              'focus-visible:outline-none focus-visible:ring-2',
-              'focus-visible:ring-[#9d4edd]'
-            )}
+            whileHover={{ scale: 1.08, rotate: 8 }}
+            whileTap={{ scale: 0.9 }}
             aria-label={themeLabel}
             title={themeLabel}
           >
@@ -303,7 +255,7 @@ export default function Navbar() {
                   animate={{ opacity: 1, rotate: 0, scale: 1 }}
                   exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
                 >
-                  <Sun size={18} />
+                  <Sun size={19} />
                 </motion.span>
               ) : (
                 <motion.span
@@ -312,7 +264,7 @@ export default function Navbar() {
                   animate={{ opacity: 1, rotate: 0, scale: 1 }}
                   exit={{ opacity: 0, rotate: -90, scale: 0.5 }}
                 >
-                  <Moon size={18} />
+                  <Moon size={19} />
                 </motion.span>
               )}
             </AnimatePresence>
@@ -320,56 +272,37 @@ export default function Navbar() {
         </nav>
 
         {/* MOBILE ACTIONS */}
-        <div className="md:hidden flex items-center gap-2">
+        <div className="mobile-actions">
 
-          {/* MOBILE THEME TOGGLE */}
+          {/* MOBILE THEME */}
           <motion.button
             type="button"
-            whileTap={{ scale: 0.92 }}
+            className="nav-action mobile-theme"
             onClick={toggleTheme}
-            className={cn(
-              'w-10 h-10 rounded-xl glass-panel',
-              'border border-white/10 flex items-center justify-center',
-              'text-white/80 hover:text-[#c084fc]',
-              'hover:border-[#9d4edd]/50 transition-all duration-300',
-              'focus-visible:outline-none focus-visible:ring-2',
-              'focus-visible:ring-[#9d4edd]'
-            )}
+            whileTap={{ scale: 0.9 }}
             aria-label={themeLabel}
-            title={themeLabel}
           >
-            {theme === 'dark' ? (
-              <Sun size={19} />
-            ) : (
-              <Moon size={19} />
-            )}
+            {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
           </motion.button>
 
-          {/* MOBILE MENU BUTTON */}
+          {/* MENU BUTTON */}
           <motion.button
             type="button"
-            whileTap={{ scale: 0.92 }}
+            className={`nav-action mobile-menu-button ${
+              mobileOpen ? 'menu-active' : ''
+            }`}
             onClick={() => setMobileOpen((open) => !open)}
-            className={cn(
-              'w-10 h-10 rounded-xl glass-panel',
-              'border border-white/10 flex items-center justify-center',
-              'text-white/80 hover:text-white',
-              'hover:border-[#9d4edd]/50',
-              'hover:shadow-[0_0_20px_rgba(157,78,221,0.2)]',
-              'transition-all duration-300',
-              'focus-visible:outline-none focus-visible:ring-2',
-              'focus-visible:ring-[#9d4edd]'
-            )}
-            aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            whileTap={{ scale: 0.9 }}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileOpen}
             aria-controls="mobile-navigation"
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.span
                 key={mobileOpen ? 'close' : 'menu'}
-                initial={{ opacity: 0, rotate: -45, scale: 0.8 }}
+                initial={{ opacity: 0, rotate: -90, scale: 0.7 }}
                 animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                exit={{ opacity: 0, rotate: 45, scale: 0.8 }}
+                exit={{ opacity: 0, rotate: 90, scale: 0.7 }}
               >
                 {mobileOpen ? <X size={22} /> : <Menu size={22} />}
               </motion.span>
@@ -378,91 +311,75 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* MOBILE NAVIGATION */}
+      {/* MOBILE MENU */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
             id="mobile-navigation"
-            initial={{ opacity: 0, y: -12, height: 0 }}
-            animate={{ opacity: 1, y: 0, height: 'auto' }}
-            exit={{ opacity: 0, y: -12, height: 0 }}
-            transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className={cn(
-              'md:hidden absolute top-full left-0 right-0',
-              'glass-panel border-t border-white/10',
-              'border-b border-white/10 px-5 sm:px-6 py-4',
-              'overflow-hidden',
-              'shadow-[0_20px_40px_rgba(0,0,0,0.35)]'
-            )}
+            className="mobile-menu"
+            initial={{ opacity: 0, height: 0, y: -10 }}
+            animate={{ opacity: 1, height: 'auto', y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -10 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            {/* MOBILE LINKS */}
-            <nav aria-label="Mobile navigation" className="flex flex-col">
+            <nav className="mobile-nav-links" aria-label="Mobile navigation">
               {navLinks.map((link, index) => (
                 <motion.a
                   key={link.href}
                   href={link.href}
                   onClick={() => handleNavigation(link.href)}
-                  initial={{ opacity: 0, x: -10 }}
+                  initial={{ opacity: 0, x: -15 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.04 }}
-                  className={cn(
-                    'group text-white/80 hover:text-white',
-                    'py-4 border-b border-white/5',
-                    'text-sm uppercase tracking-wider font-mono',
-                    'flex items-center justify-between',
-                    'transition-colors duration-200',
-                    'focus-visible:outline-none focus-visible:text-[#c084fc]'
-                  )}
+                  transition={{ delay: index * 0.06 }}
+                  className="mobile-nav-link"
                 >
+                  <span className="mobile-link-number">
+                    0{index + 1}
+                  </span>
+
                   <span>{link.name}</span>
 
-                  <span className="text-[#9d4edd] opacity-0 group-hover:opacity-100 transition-opacity">
-                    →
-                  </span>
+                  <ArrowUpRight size={17} className="mobile-link-arrow" />
                 </motion.a>
               ))}
             </nav>
 
-            {/* MOBILE LANGUAGES */}
-            <div className="flex items-center flex-wrap gap-3 pt-5">
-              <Globe size={16} className="text-[#9d4edd]" />
+            {/* MOBILE LANGUAGE */}
+            <div className="mobile-language">
+              <div className="mobile-language-heading">
+                <Globe size={16} />
+                <span>Language</span>
+              </div>
 
-              {languages.map((language, index) => (
-                <div key={language.code} className="flex items-center gap-3">
-                  {index > 0 && (
-                    <span className="text-white/20">/</span>
-                  )}
-
+              <div className="mobile-language-options">
+                {languages.map((language) => (
                   <button
+                    key={language.code}
                     type="button"
                     onClick={() => changeLanguage(language.code)}
-                    aria-pressed={currentLanguage === language.code}
-                    className={cn(
-                      'text-xs font-mono transition-colors',
+                    className={
                       currentLanguage === language.code
-                        ? 'text-[#c084fc]'
-                        : 'text-white/50 hover:text-white'
-                    )}
+                        ? 'mobile-language-selected'
+                        : ''
+                    }
                   >
                     {language.code.toUpperCase()}
                   </button>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
             {/* MOBILE FOOTER */}
-            <div className="flex items-center justify-between mt-5 pt-4 border-t border-white/5">
-              <span className="text-[10px] uppercase tracking-[0.2em] text-white/30">
-                MAHESH · DEVELOPER
-              </span>
+            <div className="mobile-menu-footer">
+              <div>
+                <Sparkles size={14} />
+                <span>MAHESH · DEVELOPER</span>
+              </div>
 
-              <button
-                type="button"
-                onClick={closeMobileMenu}
-                className="text-xs text-white/50 hover:text-white transition-colors"
-              >
-                Close
-              </button>
+              <span className="mobile-status">
+                <span />
+                Available to connect
+              </span>
             </div>
           </motion.div>
         )}
