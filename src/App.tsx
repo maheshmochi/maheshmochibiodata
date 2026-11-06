@@ -1,4 +1,5 @@
-import React, {
+
+import {
   Suspense,
   useEffect,
 } from 'react';
@@ -10,14 +11,15 @@ import MusicPlayer from './components/MusicPlayer';
 import Hero from './components/Hero';
 import About from './components/About';
 import Skills from './components/Skills';
+import Journey from './components/Journey';
 import Projects from './components/Projects';
+import Certificates from './components/Certificates';
 import Experience from './components/Experience';
 import GitHubSection from './components/GitHubSection';
 import TerminalSection from './components/Terminal';
 import Contact from './components/Contact';
 import ContactForm from './components/ContactForm';
 import Footer from './components/Footer';
-import Certificates from "./components/Certificates";
 import Scene3D from './components/Scene3D';
 
 import { ThemeProvider } from './context/ThemeContext';
@@ -37,15 +39,7 @@ export default function App() {
     <ThemeProvider>
       <div className="relative min-h-screen bg-[#050505] text-white transition-colors duration-300">
 
-        {/* =========================================
-            PARTICLE CURSOR
-        ========================================== */}
-
         <ParticleCursor />
-
-        {/* =========================================
-            3D BACKGROUND SCENE
-        ========================================== */}
 
         <Suspense
           fallback={
@@ -57,43 +51,34 @@ export default function App() {
           <Scene3D />
         </Suspense>
 
-        {/* =========================================
-            NAVIGATION
-        ========================================== */}
-
         <Navbar />
-
-        {/* =========================================
-            MUSIC PLAYER
-        ========================================== */}
 
         <MusicPlayer />
 
-        {/* =========================================
-            MAIN CONTENT
-        ========================================== */}
-
         <main className="relative">
 
-          {/* Hero */}
+          {/* Introduction */}
           <Hero />
 
           {/* About */}
           <About />
 
-          {/* Skills */}
+          {/* Education & Learning Journey */}
+          <Journey />
+
+          {/* Technical Skills */}
           <Skills />
 
-          {/* Projects */}
+          {/* Featured Projects */}
           <Projects />
 
-         
+          {/* Certifications */}
           <Certificates />
 
-          {/* Experience */}
+          {/* Practical Development Experience */}
           <Experience />
 
-          {/* GitHub */}
+          {/* GitHub Activity */}
           <GitHubSection />
 
           {/* Interactive Terminal */}
@@ -102,14 +87,10 @@ export default function App() {
           {/* Contact Form */}
           <ContactForm />
 
-          {/* Contact */}
+          {/* Contact Information */}
           <Contact />
 
         </main>
-
-        {/* =========================================
-            FOOTER
-        ========================================== */}
 
         <Footer />
 
