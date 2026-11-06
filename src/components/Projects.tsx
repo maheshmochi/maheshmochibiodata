@@ -9,7 +9,7 @@ import {
   Globe,
   ArrowUpRight,
   Sparkles,
-  Utensils,
+  Scissors,
   Plane,
 } from 'lucide-react';
 
@@ -30,7 +30,7 @@ export default function Projects() {
       accent: 'portfolio',
     },
     {
-      title: 'Cartin Craft',
+      title: 'Curtain & Craft',
       category: 'E-COMMERCE PROJECT',
       number: '02',
       desc: 'A modern e-commerce experience focused on product discovery, elegant product presentation, responsive layouts, and intuitive shopping interactions. Built around reusable UI components and a user-friendly storefront.',
@@ -48,23 +48,22 @@ export default function Projects() {
       accent: 'commerce',
     },
     {
-      title: 'Lazeez Food Delivery',
-      category: 'FOOD DELIVERY PROJECT',
+      title: 'Hemani Beauty Parlour',
+      category: 'BEAUTY & SALON WEBSITE',
       number: '03',
-      desc: 'A food delivery web application built with React.js and PHP, designed to provide a smooth food browsing experience with an intuitive interface and responsive design. MySQL is used for database management.',
+      desc: 'A premium beauty parlour website featuring elegant salon aesthetics, bridal makeup showcases, beauty services, curated packages, image galleries, and an appointment booking experience with WhatsApp integration. Designed with responsive layouts and smooth animations.',
       tech: [
-        'React.js',
-        'PHP',
-        'MySQL',
-        'JavaScript',
         'HTML5',
         'CSS3',
+        'JavaScript',
+        'Responsive Design',
+        'WhatsApp Integration',
       ],
       github: 'https://github.com/maheshmochi',
-      live: null,
-      status: 'In Development',
-      icon: Utensils,
-      accent: 'food',
+      live: 'https://hemani-beauty-parlour.vercel.app/',
+      status: 'Live',
+      icon: Scissors,
+      accent: 'beauty',
     },
     {
       title: 'Kaprupura Online Travels',
@@ -159,7 +158,9 @@ export default function Projects() {
           <div className="projects-stat-divider" />
 
           <div className="projects-stat">
-            <strong>{String(developmentProjects).padStart(2, '0')}</strong>
+            <strong>
+              {String(developmentProjects).padStart(2, '0')}
+            </strong>
             <span>In Development</span>
           </div>
         </motion.div>
